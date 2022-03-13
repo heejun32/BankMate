@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bankmate_filter %}
+
+{% block content %}
+<div class="header">
+	<div class="header-content">
+		<nav class="navbar navbar-expand">
+			<div class="collapse navbar-collapse justify-content-between">
+				<div class="header-left">
+					<div>
+						<a class="navbar-brand" href="{% url 'bankmate:index' %}">
+							<img src="{% static 'images/logo-text.png' %}" alt="" height="90" width="200"></a>
+					</div>
+					<div><a class="nav-link" href="{% url 'accounts:logout' %}">{{ user.username }} (로그아웃)</a></div>
+				</div>
+			</div>
+		</nav>
+	</div>
+</div>
+
+<div class="content-body">
+    <div class="container my-3">
+        <!-- 사용자오류 표시 -->
+        {% if messages %}
+        <div class="alert alert-danger my-3" role="alert">
+        {% for message in messages %}
+            <strong>{{ message.tags }}</strong>
+            <ul><li>{{ message.message }}</li></ul>
+        {% endfor %}
+        </div>
+        {% endif %}
+        <h2 class="border-bottom py-2">{{ document.subject }}</h2>
+        <div class="card my-3">
+            <div class="card-body">
+                <div class="card-text">{{ document.content|mark }}</div>
+                <div class="d-flex justify-content-end">
+                    {% if document.modify_date %}
+                    <div class="badge badge-light p-2 text-left">
+                        <div class="mb-2">수정됨</div>
+                        <div>{{ document.modify_date }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="badge badge-light p-2 text-left">
+                        <div class="mb-2">작성자: {{ document.author.username }}</div>
+                        <div>{{ document.create_date }}</div>
+                    </div>
+                </div>
+                {% if request.user == document.author %}
+                <div class="my-3">
+                    <a href="{% url 'bankmate:document_modify' document.id  %}"
+                       class="btn btn-sm btn-outline-secondary">수정</a>
+                    <a href="#" class="delete btn btn-sm btn-outline-secondary"
+                       data-uri="{% url 'bankmate:document_delete' document.id  %}">삭제</a>
+                </div>
+                {% endif %}
+                <!-- 질문 댓글 Start -->
+                {% if document.comment_set.count > 0 %}
+                <div class="mt-3">
+                    {% for comment in document.comment_set.all %}  <!-- 등록한 댓글을 출력 -->
+                    <a name="comment_{{ comment.id }}"></a>
+                    <div class="comment py-2 text-muted">  <!-- 댓글 각각에 comment 스타일 지정 -->
+                        <span style="white-space: pre-line;">{{ comment.content }}</span>
+                        <span>
+                            - {{ comment.author }}, {{ comment.create_date }}
+                            {% if comment.modify_date %}
+                            (수정:{{ comment.modify_date }})
+                            {% endif %}
+                        </span>
+                        {% if request.user == comment.author %}
+                        <a href="{% url 'bankmate:comment_modify_document' comment.id  %}" class="small">수정</a>,
+                        <a href="#" class="small delete"
+                           data-uri="{% url 'bankmate:comment_delete_document' comment.id  %}">삭제</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            <a href="{% url 'bankmate:comment_create_document' document.id  %}"
+               class="small"><small>댓글 추가</small></a>  <!-- 댓글 추가 링크 -->
+            </div>
+        </div>
+        <!-- 질문 댓글 End -->
+        <h5 class="border-bottom my-3 py-2">{{document.answer_set.count}}개의 답변이 있습니다.</h5>
+        {% for answer in document.answer_set.all %}
+        <a name="answer_{{ answer.id }}"></a>
+        <div class="card my-3">
+            <div class="card-body">
+                <div class="card-text">{{ answer.content|mark }}</div>
+                <div class="d-flex justify-content-end">
+                    {% if answer.modify_date %}
+                    <div class="badge badge-light p-2 text-left">
+                        <div class="mb-2">수정됨</div>
+                        <div>{{ answer.modify_date }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="badge badge-light p-2 text-left">
+                        <div class="mb-2">작성자: {{ answer.author.username }}</div>
+                        <div>{{ answer.create_date }}</div>
+                    </div>
+                </div>
+                {% if request.user == answer.author %}
+                <div class="my-3">
+                    <a href="{% url 'bankmate:answer_modify' answer.id  %}"
+                       class="btn btn-sm btn-outline-secondary">수정</a>
+                    <a href="#" class="delete btn btn-sm btn-outline-secondary"
+                       data-uri="{% url 'bankmate:answer_delete' answer.id  %}">삭제</a>
+                </div>
+                {% endif %}
+                <!-- 답변 댓글 Start -->
+                {% if answer.comment_set.count > 0 %}
+                <div class="mt-3">
+                    {% for comment in answer.comment_set.all %}
+                    <a name="comment_{{ comment.id }}"></a>
+                    <div class="comment py-2 text-muted">
+                        <span style="white-space: pre-line;">{{ comment.content }}</span>
+                        <span>
+                            - {{ comment.author }}, {{ comment.create_date }}
+                            {% if comment.modify_date %}
+                            (수정:{{ comment.modify_date }})
+                            {% endif %}
+                        </span>
+                        {% if request.user == comment.author %}
+                        <a href="{% url 'bankmate:comment_modify_answer' comment.id  %}" class="small">수정</a>,
+                        <a href="#" class="small delete"
+                           data-uri="{% url 'bankmate:comment_delete_answer' comment.id  %}">삭제</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <a href="{% url 'bankmate:comment_create_answer' answer.id  %}"
+                   class="small"><small>댓글 추가</small></a>
+                </div>
+            </div>
+        {% endfor %}
+        <form action="{% url 'bankmate:answer_create' document.id %}" method="post" class="my-3">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+                {% if field.errors %}
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+                {% endif %}
+            {% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <textarea {% if not user.is_authenticated %}disabled{% endif %}
+                          name="content" id="content" class="form-control" rows="10"></textarea>
+            </div>
+            <input type="submit" value="답변등록" class="btn btn-primary">
+        </form>
+    </div>
+</div>
+{% endblock %}

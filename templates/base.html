@@ -1,0 +1,75 @@
+{% load static %}
+
+<!Doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+    <!-- pybo CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="" />
+	<meta name="author" content="" />
+	<meta name="robots" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Jobick : Job Admin Bootstrap 5 Template" />
+	<meta property="og:title" content="Jobick : Job Admin Bootstrap 5 Template" />
+	<meta property="og:description" content="Jobick : Job Admin Bootstrap 5 Template" />
+	<meta property="og:image" content="https://jobick.dexignlab.com/xhtml/social-image.png" />
+	<meta name="format-detection" content="telephone=no">
+
+    <!-- PAGE TITLE HERE -->
+	<title>Bank Mate</title>
+
+	<!-- FAVICONS ICON -->
+	<link rel= "shortcut icon" type="image/png" href="{% static 'images/logo.png' %}" />
+	<link href="{% static 'vendor/jquery-nice-select/css/nice-select.css' %}" rel="stylesheet">
+	<link href="{% static 'vendor/datatables/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+
+	<!-- Style css -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+{% block content %}
+{% endblock %}
+<!-- jQuery JS -->
+<script src="{% static 'jquery-3.6.0.min.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<!-- 자바스크립트 Start -->
+{% block script %}
+<script type='text/javascript'>
+$(document).ready(function(){
+    $(".delete").on('click', function() {
+        if(confirm("정말로 삭제하시겠습니까?")) {
+            location.href = $(this).data('uri');
+        }
+    });
+});
+</script>
+{% endblock %}
+<script src="{% static 'vendor/global/global.min.js' %}"></script>
+<script src="{% static 'vendor/chart.js/Chart.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/jquery-nice-select/js/jquery.nice-select.min.js' %}"></script>
+
+<!-- Apex Chart -->
+<script src="{% static 'vendor/bootstrap-datepicker-master/js/bootstrap-datepicker.min.js' %}"></script>
+
+<!-- Chart piety plugin files -->
+<script src="{% static 'vendor/datatables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/plugins-init/datatables.init.js' %}"></script>
+
+<!-- Dashboard 1 -->
+<script src="{% static 'js/custom.min.js' %}"></script>
+<script src="{% static 'js/dlabnav-init.js' %}"></script>
+<!-- 자바스크립트 End -->
+
+</body>
+</html>
